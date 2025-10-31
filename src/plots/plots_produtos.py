@@ -276,3 +276,60 @@ def top_categoria_outlier_share(df, categoria, outliers):
     plt.savefig(save_path)
     plt.show()
     plt.close()
+
+def top_categorias_mensal(df, n_top):
+    mes_map = {
+        1: 'Jan', 2: 'Fev', 3: 'Mar', 4: 'Abr',
+        5: 'Mai', 6: 'Jun', 7: 'Jul', 8: 'Ago',
+        9: 'Set', 10: 'Out', 11: 'Nov', 12: 'Dez'
+    }
+    meses_ordenados = list(mes_map.values())
+
+    df['MES_NUM'] = df['DATA_ATEND'].dt.month
+
+    df_agregado = df.groupby(['MES_NUM', 'CATEGORIA'])['QTD_VENDA'].sum().reset_index()
+    df_agregado['TOTAL_MES'] = df_agregado.groupby('MES_NUM')['QTD_VENDA'].transform('sum')
+    df_agregado['PERCENTUAL'] = (df_agregado['QTD_VENDA'] / df_agregado['TOTAL_MES']) * 100
+
+    def get_top_n(group):
+        return group.nlargest(n_top, 'PERCENTUAL')
+
+    df_top_n_mensal = df_agregado.groupby('MES_NUM', group_keys=False).apply(get_top_n)
+    
+    df_top_n_mensal['MES_NOME'] = df_top_n_mensal['MES_NUM'].map(mes_map)
+
+    plt.figure(figsize=(14, 7))
+    
+    ax = sns.barplot(
+        data=df_top_n_mensal,
+        x='MES_NOME',
+        y='PERCENTUAL',
+        hue='CATEGORIA', 
+        order=meses_ordenados,
+        palette='tab10' 
+    )
+
+    formatter_k = ticker.FuncFormatter(lambda x, p: f'{x/1000:.1f}K')
+    ax.yaxis.set_major_formatter(formatter_k)
+    
+    for p in ax.patches:
+        ax.annotate(f'{p.get_height():.1f}%',
+                       (p.get_x() + p.get_width() / 2., p.get_height()),
+                       ha = 'center', va = 'center',
+                       xytext = (0, 9),
+                       textcoords = 'offset points',
+                       fontsize=8,
+                       fontweight='bold')
+
+    ax.set_title(f'Top {n_top} Categorias Mais Vendidas por Mês (Volume)', fontsize=16)
+    ax.set_xlabel('Mês', fontsize=12)
+    ax.set_ylabel('Percentual', fontsize=12)
+    ax.legend(title='Categoria', loc='upper left', bbox_to_anchor=(1.0, 1))
+
+    plt.tight_layout(rect=[0, 0, 0.85, 1])
+    
+    # 6. Salvamento
+    save_path = os.path.join(PATH_GRAFICOS, 'top_3_categorias_sazonais.png')
+    plt.savefig(save_path)
+    plt.show()
+    plt.close()
