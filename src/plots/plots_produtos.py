@@ -564,3 +564,118 @@ def subcategoria_by_filial_sazonal(df_vendas_completo, target_subcategory):
     plt.savefig(save_path)
     plt.show()
     plt.close()
+
+def top_produtos(df):
+    df_faturamento_produto = df.groupby(['NOME_PRODUTO', 'CATEGORIA']).agg(
+        Faturamento_Total=('FATUR_VENDA', 'sum')
+    ).reset_index()
+
+    # 2. Ordenar pelo Faturamento e selecionar os Top 20 produtos mais vendidos
+    df_top_produtos = df_faturamento_produto.sort_values(by='Faturamento_Total', ascending=False).head(20)
+
+    # 3. Preparar a visualização
+    plt.figure(figsize=(14, 8))
+    sns.set_style("whitegrid")
+
+    # 4. Criar o gráfico de barras, diferenciando pela CATEGORIA
+    # Usando a coluna 'CATEGORIA' para determinar a cor (hue)
+    bar_plot = sns.barplot(
+        data=df_top_produtos,
+        x='NOME_PRODUTO',
+        y='Faturamento_Total',
+        hue='CATEGORIA',
+        dodge=False
+    )
+
+    # 5. Adicionar Título e Rótulos
+    plt.title(f'Top 20 Produtos por Faturamento Total',fontsize=16)
+    plt.xlabel('Produto', fontsize=12)
+    plt.ylabel('Faturamento Total (R$)', fontsize=12)
+
+    # Rotacionar os rótulos do eixo X para melhor leitura
+    plt.xticks(rotation=45, ha='right', fontsize=10)
+    plt.yticks(fontsize=10)
+
+    # 6. Melhorar a Legenda
+    plt.legend(title='Categoria', bbox_to_anchor=(1.05, 1), loc='upper left')
+
+    # 7. Ajustar o layout e salvar o gráfico
+    PATH_GRAFICOS = os.path.join(os.pardir, 'graphics')
+    save_path = os.path.join(PATH_GRAFICOS, 'top_produtos.png')
+    plt.savefig(save_path)
+    plt.show()
+    plt.close()
+
+def top_produtos_volume(df):
+    df_volume_produto = df.groupby(['NOME_PRODUTO', 'CATEGORIA']).agg(
+        Volume_Total=('QTD_VENDA', 'sum')
+    ).reset_index()
+
+    # 2. Ordenar pelo Faturamento e selecionar os Top 20 produtos mais vendidos
+    df_top_produtos = df_volume_produto.sort_values(by='Volume_Total', ascending=False).head(20)
+
+    # 3. Preparar a visualização
+    plt.figure(figsize=(14, 8))
+    sns.set_style("whitegrid")
+
+    # 4. Criar o gráfico de barras, diferenciando pela CATEGORIA
+    # Usando a coluna 'CATEGORIA' para determinar a cor (hue)
+    bar_plot = sns.barplot(
+        data=df_top_produtos,
+        x='NOME_PRODUTO',
+        y='Volume_Total',
+        hue='CATEGORIA',
+        dodge=False
+    )
+
+    # 5. Adicionar Título e Rótulos
+    plt.title(f'Top 20 Produtos por Volume Total',fontsize=16)
+    plt.xlabel('Produto', fontsize=12)
+    plt.ylabel('Volume Total', fontsize=12)
+
+    # Rotacionar os rótulos do eixo X para melhor leitura
+    plt.xticks(rotation=45, ha='right', fontsize=10)
+    plt.yticks(fontsize=10)
+
+    # 6. Melhorar a Legenda
+    plt.legend(title='Categoria', bbox_to_anchor=(1.05, 1), loc='upper left')
+
+    # 7. Ajustar o layout e salvar o gráfico
+    PATH_GRAFICOS = os.path.join(os.pardir, 'graphics')
+    save_path = os.path.join(PATH_GRAFICOS, 'top_produtos_volume.png')
+    plt.savefig(save_path)
+    plt.show()
+    plt.close()
+
+def top_categorias_valor(df):
+
+    # 1. Agrupar os dados por CATEGORIA e somar o Faturamento
+    df_faturamento_categoria = df.groupby('CATEGORIA').agg(
+        Faturamento_Total=('FATUR_VENDA', 'sum')
+    ).reset_index()
+
+    # 2. Ordenar e selecionar as Top 10 categorias
+    df_faturamento_categoria = df_faturamento_categoria.sort_values(by='Faturamento_Total', ascending=False)
+    df_top_categorias = df_faturamento_categoria.head(10)
+
+    # 3. Criar o gráfico de barras (sem rótulos de porcentagem)
+    plt.figure(figsize=(12, 7))
+    sns.set_style("whitegrid")
+    bar_plot = sns.barplot(
+        data=df_top_categorias,
+        x='CATEGORIA',
+        y='Faturamento_Total',
+        palette='viridis'
+    )
+
+    # 4. Formatar o eixo Y para Reais (milhões)
+    formatter = ticker.FuncFormatter(lambda x, pos: f'R$ {x/1e6:.1f}M')
+    bar_plot.yaxis.set_major_formatter(formatter)
+
+    # 5. Adicionar Título e Rótulos
+    plt.title('Top 10 Categorias por Faturamento Total (R$)', fontsize=16)
+    plt.xlabel('Categoria', fontsize=12)
+    plt.ylabel('Faturamento Total (R$)', fontsize=12)
+    plt.xticks(rotation=45, ha='right', fontsize=10)
+    plt.yticks(fontsize=10)
+    plt.tight_layout()
