@@ -18,25 +18,12 @@ sns.set_style("whitegrid")
 #Funções de Plotagem
 
 def plot_top_10_categorias(df_produtos):
-    """
-    Limpa, calcula e plota um gráfico de barras com as 10 principais
-    categorias de produtos.
-    
-    Argumentos:
-        df_produtos (pd.DataFrame): O DataFrame de produtos.
-    """
-    print("Iniciando plot: Top 10 Categorias...")
-    
-    # 1. Criar uma lista de categorias a serem excluídas
     categorias_para_excluir = ['Sem categoria', '']
 
     # 2. Filtrar o DataFrame
     produtos_clean_categoria = df_produtos[
         ~df_produtos['CATEGORIA'].str.strip().isin(categorias_para_excluir)
     ]
-
-    print(f"Total de produtos no catálogo: {len(df_produtos)}")
-    print(f"Total de produtos com categoria definida: {len(produtos_clean_categoria)}")
 
     # 3. Selecionar o Top 10
     top_10_cat = produtos_clean_categoria['CATEGORIA'].value_counts(normalize=True).head(10)
@@ -50,9 +37,6 @@ def plot_top_10_categorias(df_produtos):
     # 6. Converter o percentual de (0.0 a 1.0) para (0 a 100) para exibição
     top_10_df['PERCENTUAL'] = top_10_df['PERCENTUAL'] * 100
 
-    print("\nTop 10 Categorias (%):")
-    print(top_10_df)
-
     # --- Geração do Gráfico ---
     plt.figure(figsize=(12, 8))
 
@@ -60,7 +44,7 @@ def plot_top_10_categorias(df_produtos):
         data=top_10_df,
         x='CATEGORIA',
         y='PERCENTUAL',
-        palette='Spectral'
+        palette='Blues_r'
     )
 
     ax.set_title('Top 10 Categorias de Produtos (Percentual do Total Definido)', fontsize=16)
@@ -86,19 +70,7 @@ def plot_top_10_categorias(df_produtos):
     plt.show()
     plt.close()
 
-    print(f"\nGráfico salvo com sucesso em: {save_path}")
-
-
 def plot_top_10_subcategorias(df_produtos):
-    """
-    Limpa, calcula e plota um gráfico de barras com as 10 principais
-    subcategorias de produtos.
-    
-    Argumentos:
-        df_produtos (pd.DataFrame): O DataFrame de produtos.
-    """
-    print("Iniciando plot: Top 10 Subcategorias...")
-    
     # 1. Criar uma lista de subcategorias a serem excluídas
     subcategorias_para_excluir = ['Sem subcategoria', '']
 
@@ -106,9 +78,6 @@ def plot_top_10_subcategorias(df_produtos):
     produtos_clean_subcategoria = df_produtos[
         ~df_produtos['SUBCATEGORIA'].str.strip().isin(subcategorias_para_excluir)
     ]
-
-    print(f"Total de produtos no catálogo: {len(df_produtos)}")
-    print(f"Total de produtos com subcategoria definida: {len(produtos_clean_subcategoria)}")
 
     # 3. Selecionar o Top 10
     top_10_cat = produtos_clean_subcategoria['SUBCATEGORIA'].value_counts(normalize=True).head(10)
@@ -122,9 +91,6 @@ def plot_top_10_subcategorias(df_produtos):
     # 6. Converter o percentual de (0.0 a 1.0) para (0 a 100) para exibição
     top_10_df['PERCENTUAL'] = top_10_df['PERCENTUAL'] * 100
 
-    print("\nTop 10 Subcategorias (%):")
-    print(top_10_df)
-
     # --- Geração do Gráfico ---
     plt.figure(figsize=(12, 8))
 
@@ -132,7 +98,7 @@ def plot_top_10_subcategorias(df_produtos):
         data=top_10_df,
         x='SUBCATEGORIA',
         y='PERCENTUAL',
-        palette='Spectral'
+        palette='Blues_r'
     )
 
     ax.set_title('Top 10 Subcategorias de Produtos (Percentual do Total Definido)', fontsize=16)
@@ -157,5 +123,3 @@ def plot_top_10_subcategorias(df_produtos):
     plt.savefig(save_path)
     plt.show()
     plt.close()
-
-    print(f"\nGráfico salvo com sucesso em: {save_path}")

@@ -41,7 +41,7 @@ def faturamento_mensal(df_vendas):
         x='MES_NOME',      
         y='FATUR_VENDA',  
         order=meses_ordenados, 
-        color='#0000ff',
+        palette='Blues_r',
         legend=False
     )
 

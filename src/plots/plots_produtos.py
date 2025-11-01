@@ -23,7 +23,7 @@ def top_categorias_vendidas(df):
         x='CATEGORIA',
         y='PERCENTUAL',
         hue='CATEGORIA',
-        palette='Spectral',
+        palette='Blues_r',
         legend=False
     )
 
@@ -68,7 +68,7 @@ def top_subcategorias_vendidas(df):
         x='SUBCATEGORIA',
         y='PERCENTUAL',
         hue='SUBCATEGORIA',
-        palette='Spectral',
+        palette='Blues_r',
         legend=False
     )
 
@@ -128,7 +128,7 @@ def top_categorias_sazonais(df, n_top, outliers):
         y='PERCENTUAL',
         hue='CATEGORIA', 
         order=meses_ordenados,
-        palette='tab10' 
+        palette='Blues_r' 
     )
 
     formatter_k = ticker.FuncFormatter(lambda x, p: f'{x/1000:.1f}K')
@@ -189,7 +189,7 @@ def top_subcategorias_sazonais(df, n_top, outliers):
         y='PERCENTUAL',
         hue='SUBCATEGORIA', 
         order=meses_ordenados,
-        palette='tab10' 
+        palette='Blues_r' 
     )
 
     formatter_k = ticker.FuncFormatter(lambda x, p: f'{x/1000:.1f}K')
@@ -248,7 +248,7 @@ def top_categoria_outlier_share(df, categoria, outliers):
         y='PERCENTUAL', 
         order=meses_ordenados,
         # Usando 'color' para cor única (melhor prática)
-        color=sns.color_palette('Reds', n_colors=1)[0]
+        pallete='Blues_r'
     )
 
     # Formatação Eixo Y é agora %
@@ -306,7 +306,7 @@ def top_categorias_mensal(df, n_top):
         y='PERCENTUAL',
         hue='CATEGORIA', 
         order=meses_ordenados,
-        palette='tab10' 
+        palette='Blues_r' 
     )
 
     formatter_k = ticker.FuncFormatter(lambda x, p: f'{x/1000:.1f}K')
@@ -382,7 +382,7 @@ def top_produtos_sazonais_percentual(df, n_top, outliers, categoria):
         y='PERCENTUAL', 
         hue='NOME_PRODUTO', 
         order=meses_ordenados,
-        palette='hls' # Paleta de cores para diferenciar os SKUs
+        palette='Blues_r' # Paleta de cores para diferenciar os SKUs
     )
 
     # Formatação Eixo Y é %
@@ -462,7 +462,7 @@ def plot_top_subcategorias_sazonais(df, n_top):
         y='PERCENTUAL', # Eixo Y é agora o PERCENTUAL
         hue='SUBCATEGORIA', 
         order=meses_ordenados,
-        palette='tab10' 
+        palette='Blues_r' 
     )
 
     # Formatação Eixo Y é %
@@ -536,7 +536,7 @@ def subcategoria_by_filial_sazonal(df_vendas_completo, target_subcategory):
         y='PERCENTUAL', # Eixo Y agora é PERCENTUAL
         hue='FILIAL', 
         order=meses_ordenados,
-        palette='muted' 
+        palette='Blues' 
     )
 
     # Formatação Eixo Y para %
@@ -625,7 +625,8 @@ def top_produtos_volume(df):
         x='NOME_PRODUTO',
         y='Volume_Total',
         hue='CATEGORIA',
-        dodge=False
+        dodge=False,
+        pallete='Blues_r'
     )
 
     # 5. Adicionar Título e Rótulos
@@ -665,7 +666,7 @@ def top_categorias_valor(df):
         data=df_top_categorias,
         x='CATEGORIA',
         y='Faturamento_Total',
-        palette='viridis'
+        palette='Blues_r'
     )
 
     # 4. Formatar o eixo Y para Reais (milhões)

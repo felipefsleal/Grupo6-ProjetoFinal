@@ -27,19 +27,6 @@ MESES_ORDENADOS = list(MES_MAP.values())
 # --- Função de Plotagem de Sazonalidade ---
 
 def plot_faturamento_sazonal_filial(df_vendas_produtos, categorias, nome_arquivo, titulo_grafico):
-    """
-    Filtra o faturamento para categorias específicas (sazonais) e plota
-    o desempenho mensal agrupado por filial.
-
-    Argumentos:
-        df_vendas_produtos (pd.DataFrame): O DataFrame já mergido de vendas e produtos.
-        categorias (list): Uma lista de strings com as categorias a serem filtradas.
-        nome_arquivo (str): O nome do arquivo .png a ser salvo (ex: 'sazonal_natal.png').
-        titulo_grafico (str): O título completo para o gráfico.
-    """
-    print(f"Iniciando plot: {titulo_grafico}...")
-    
-    # 1. Preparação dos Dados
     df = df_vendas_produtos.copy()
     
     # Garante que a coluna de mês exista (caso o DF seja 'vendas_produtos' puro)
@@ -71,7 +58,7 @@ def plot_faturamento_sazonal_filial(df_vendas_produtos, categorias, nome_arquivo
         y='FATUR_VENDA',
         hue='FILIAL',
         order=MESES_ORDENADOS,
-        palette='muted'
+        palette='Set2'
     )
 
     # 4. Formatação e Rótulos

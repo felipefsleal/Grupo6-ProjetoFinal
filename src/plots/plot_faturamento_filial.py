@@ -27,19 +27,8 @@ MESES_ORDENADOS = list(MES_MAP.values())
 #Funções de Plotagem
 
 def plot_faturamento_total_filial(df_vendas):
-    """
-    Plota o faturamento total (anual) por filial.
-    
-    Argumentos:
-        df_vendas (pd.DataFrame): O DataFrame de vendas.
-    """
-    print("Iniciando plot: Faturamento Total por Filial...")
-    
     # 1. Agrupamento dos Dados
     df_faturamento_filial = df_vendas.groupby('FILIAL')['FATUR_VENDA'].sum().reset_index()
-
-    print("\n--- Faturamento Total Agrupado por Filial ---")
-    print(df_faturamento_filial)
 
     # 2. Geração do Gráfico
     plt.figure(figsize=(9, 6))
@@ -47,7 +36,7 @@ def plot_faturamento_total_filial(df_vendas):
         data=df_faturamento_filial,
         x='FILIAL',
         y='FATUR_VENDA',
-        palette='muted'
+        palette='Blues'
     )
 
     # 3. Formatação e Rótulos
@@ -72,20 +61,8 @@ def plot_faturamento_total_filial(df_vendas):
     plt.savefig(save_path)
     plt.show()
     plt.close()
-    
-    print(f"\nGráfico salvo com sucesso em: {save_path}")
-
 
 def plot_faturamento_mensal_filial(df_vendas):
-    """
-    Plota o faturamento mensal agrupado por filial.
-    
-    Argumentos:
-        df_vendas (pd.DataFrame): O DataFrame de vendas.
-    """
-    print("Iniciando plot: Faturamento Mensal por Filial...")
-    
-    # 1. Preparação dos Dados
     df = df_vendas.copy()
     df['DATA_ATEND'] = pd.to_datetime(df['DATA_ATEND'])
     df['MES_NUM'] = df['DATA_ATEND'].dt.month
@@ -102,7 +79,7 @@ def plot_faturamento_mensal_filial(df_vendas):
         y='FATUR_VENDA',
         hue='FILIAL',
         order=MESES_ORDENADOS, # Usa a constante global
-        palette='muted'
+        palette='Blues'
     )
 
     # 4. Formatação e Rótulos
@@ -119,21 +96,8 @@ def plot_faturamento_mensal_filial(df_vendas):
     plt.savefig(save_path)
     plt.show()
     plt.close()
-    
-    print(f"\nGráfico salvo com sucesso em: {save_path}")
-
 
 def plot_faturamento_e_ticket_medio_mensal(df_vendas):
-    """
-    Plota o faturamento (barras) e o ticket médio (linhas) mensal
-    por filial em um gráfico combinado.
-    
-    Argumentos:
-        df_vendas (pd.DataFrame): O DataFrame de vendas.
-    """
-    print("Iniciando plot: Faturamento e Ticket Médio Mensal...")
-    
-    # 1. Preparação dos Dados
     df = df_vendas.copy()
     df['DATA_ATEND'] = pd.to_datetime(df['DATA_ATEND'])
     df['MES_NUM'] = df['DATA_ATEND'].dt.month
@@ -154,7 +118,7 @@ def plot_faturamento_e_ticket_medio_mensal(df_vendas):
     df_tm_shopping = df_agregado_tm[df_agregado_tm['FILIAL'] == 'SHOPPING']
 
     # 4. Geração do Gráfico Combinado
-    palette_colors = sns.color_palette('muted')
+    palette_colors = sns.color_palette("Spectral")
     color_rua = palette_colors[0]
     color_shopping = palette_colors[1]
     fig, ax = plt.subplots(figsize=(15, 8))
@@ -166,7 +130,7 @@ def plot_faturamento_e_ticket_medio_mensal(df_vendas):
         y='FATUR_VENDA',
         hue='FILIAL',
         order=MESES_ORDENADOS,
-        palette='muted',
+        palette='Blues',
         ax=ax
     )
     ax.set_title('Faturamento Mensal e Ticket Médio por Filial (2024)', fontsize=18)
@@ -214,20 +178,9 @@ def plot_faturamento_e_ticket_medio_mensal(df_vendas):
     plt.savefig(save_path)
     plt.show()
     plt.close(fig)
-    
-    print(f"\nGráfico salvo com sucesso em: {save_path}")
 
 
 def plot_clientes_unicos_mensal_filial(df_vendas):
-    """
-    Plota o número de clientes únicos por mês, agrupado por filial.
-    
-    Argumentos:
-        df_vendas (pd.DataFrame): O DataFrame de vendas.
-    """
-    print("Iniciando plot: Clientes Únicos Mensal por Filial...")
-    
-    # 1. Preparação dos Dados
     df = df_vendas.copy()
     df['DATA_ATEND'] = pd.to_datetime(df['DATA_ATEND'])
     df['MES_NUM'] = df['DATA_ATEND'].dt.month
@@ -244,7 +197,7 @@ def plot_clientes_unicos_mensal_filial(df_vendas):
         y='CLI_CPF',
         hue='FILIAL',
         order=MESES_ORDENADOS,
-        palette='muted'
+        palette='Blues'
     )
 
     # 4. Formatação e Rótulos
@@ -271,5 +224,3 @@ def plot_clientes_unicos_mensal_filial(df_vendas):
     plt.savefig(save_path)
     plt.show()
     plt.close()
-    
-    print(f"\nGráfico salvo com sucesso em: {save_path}")
