@@ -43,13 +43,15 @@ def plot_top_10_categorias(df_produtos):
     ax = sns.barplot(
         data=top_10_df,
         x='CATEGORIA',
+        hue='CATEGORIA',
+        legend=False,
         y='PERCENTUAL',
         palette='Blues_r'
     )
 
     ax.set_title('Top 10 Categorias de Produtos (Percentual do Total Definido)', fontsize=16)
     ax.set_xlabel('Categoria', fontsize=12)
-    ax.set_ylabel('Percentual do Total (%)', fontsize=12)
+    ax.set_ylabel('Percentual', fontsize=12)
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, _: f'{y:.1f}%'))
 
@@ -97,13 +99,15 @@ def plot_top_10_subcategorias(df_produtos):
     ax = sns.barplot(
         data=top_10_df,
         x='SUBCATEGORIA',
+        hue='SUBCATEGORIA',
+        legend=False,
         y='PERCENTUAL',
         palette='Blues_r'
     )
 
     ax.set_title('Top 10 Subcategorias de Produtos (Percentual do Total Definido)', fontsize=16)
     ax.set_xlabel('Subcategoria', fontsize=12)
-    ax.set_ylabel('Percentual do Total (%)', fontsize=12)
+    ax.set_ylabel('Percentual (%)', fontsize=12)
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, _: f'{y:.1f}%'))
 

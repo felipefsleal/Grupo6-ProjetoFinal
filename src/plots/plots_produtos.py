@@ -298,7 +298,7 @@ def top_categorias_mensal(df, n_top):
     
     df_top_n_mensal['MES_NOME'] = df_top_n_mensal['MES_NUM'].map(mes_map)
 
-    plt.figure(figsize=(14, 7))
+    plt.figure(figsize=(18, 7))
     
     ax = sns.barplot(
         data=df_top_n_mensal,
@@ -306,11 +306,11 @@ def top_categorias_mensal(df, n_top):
         y='PERCENTUAL',
         hue='CATEGORIA', 
         order=meses_ordenados,
-        palette='Blues_r' 
+        palette='Blues' 
     )
 
-    formatter_k = ticker.FuncFormatter(lambda x, p: f'{x/1000:.1f}K')
-    ax.yaxis.set_major_formatter(formatter_k)
+    formatter_pct = ticker.FuncFormatter(lambda x, p: f'{x:.1f}%')
+    ax.yaxis.set_major_formatter(formatter_pct)
     
     for p in ax.patches:
         ax.annotate(f'{p.get_height():.1f}%',
@@ -665,12 +665,14 @@ def top_categorias_valor(df):
     bar_plot = sns.barplot(
         data=df_top_categorias,
         x='CATEGORIA',
+        hue='CATEGORIA',
+        legend=False,
         y='Faturamento_Total',
         palette='Blues_r'
     )
 
     # 4. Formatar o eixo Y para Reais (milhões)
-    formatter = ticker.FuncFormatter(lambda x, pos: f'R$ {x/1e6:.1f}M')
+    formatter = ticker.FuncFormatter(lambda x, pos: f'{x/1e6:.1f}M')
     bar_plot.yaxis.set_major_formatter(formatter)
 
     # 5. Adicionar Título e Rótulos

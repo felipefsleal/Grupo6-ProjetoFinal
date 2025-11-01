@@ -35,16 +35,18 @@ def plot_faturamento_total_filial(df_vendas):
     ax = sns.barplot(
         data=df_faturamento_filial,
         x='FILIAL',
+        hue='FILIAL',
+        legend=False,
         y='FATUR_VENDA',
         palette='Blues'
     )
 
     # 3. Formatação e Rótulos
-    ax.set_title('Faturamento Total por Filial (Ano 2024)', fontsize=16)
-    ax.set_xlabel('Tipo de Filial', fontsize=12)
-    ax.set_ylabel('Faturamento Total (R$)', fontsize=12)
+    ax.set_title('Faturamento Total por Filial (2024)', fontsize=16)
+    ax.set_xlabel('Filial', fontsize=12)
+    ax.set_ylabel('Faturamento (em milhares de R$)', fontsize=12)
 
-    formatter_currency = ticker.FuncFormatter(lambda x, p: f'R$ {x:,.0f}')
+    formatter_currency = ticker.FuncFormatter(lambda x, p: f'{x/1000:,.0f}K')
     ax.yaxis.set_major_formatter(formatter_currency)
 
     for p in ax.patches:
@@ -86,7 +88,7 @@ def plot_faturamento_mensal_filial(df_vendas):
     ax.set_title('Faturamento Mensal por Filial (2024)', fontsize=16)
     ax.set_xlabel('Mês', fontsize=12)
     ax.set_ylabel('Faturamento (R$)', fontsize=12)
-    formatter = ticker.FuncFormatter(lambda x, p: f'R$ {x/1000:.0f}K')
+    formatter = ticker.FuncFormatter(lambda x, p: f'{x/1000:.0f}K')
     ax.yaxis.set_major_formatter(formatter)
     ax.legend(title='Filial', loc='upper left')
 
@@ -136,7 +138,7 @@ def plot_faturamento_e_ticket_medio_mensal(df_vendas):
     ax.set_title('Faturamento Mensal e Ticket Médio por Filial (2024)', fontsize=18)
     ax.set_xlabel('Mês', fontsize=12)
     ax.set_ylabel('Faturamento (R$)', fontsize=12, color='gray')
-    formatter_k = ticker.FuncFormatter(lambda x, p: f'R$ {x/1000:.0f}K')
+    formatter_k = ticker.FuncFormatter(lambda x, p: f'{x/1000:.0f}K')
     ax.yaxis.set_major_formatter(formatter_k)
     ax.tick_params(axis='y', labelcolor='gray')
 
@@ -221,6 +223,43 @@ def plot_clientes_unicos_mensal_filial(df_vendas):
     # 5. Salvamento
     save_path = os.path.join(PATH_GRAFICOS, 'clientes_unicos_mensal_agrupado.png')
     plt.tight_layout()
+    plt.savefig(save_path)
+    plt.show()
+    plt.close()
+
+def vendas_dia_semana(df):
+    df['DIA_SEMANA'] = df['DATA_ATEND'].dt.day_name()
+
+    df_faturamento_medio = df.groupby(['DIA_SEMANA', 'FILIAL']).agg(
+        Soma_Faturamento=('FATUR_VENDA', 'sum'),
+        Num_Dias_Unicos=('DATA_ATEND', 'nunique') # CONTAGEM DE DIAS ÚNICOS
+    ).reset_index()
+    
+    df_faturamento_medio['Faturamento_Medio'] = df_faturamento_medio['Soma_Faturamento'] / df_faturamento_medio['Num_Dias_Unicos']
+
+    ordem_dias = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    df_faturamento_medio['DIA_ORDEM'] = pd.Categorical(
+        df_faturamento_medio['DIA_SEMANA'], categories=ordem_dias, ordered=True
+    )
+    df_faturamento_medio = df_faturamento_medio.sort_values(['DIA_ORDEM', 'FILIAL'])
+    plt.figure(figsize=(12, 7))
+    sns.set_style("whitegrid")
+    bar_plot = sns.barplot(
+        data=df_faturamento_medio,
+        x='DIA_SEMANA',
+        y='Faturamento_Medio',
+        hue='FILIAL',           # Chave de diferenciação
+        palette='Blues'       # Esquema de cores
+    )
+
+    plt.title('Faturamento Médio por Dia da Semana e Tipo de Filial', fontsize=16)
+    plt.xlabel('Dia da Semana', fontsize=12)
+    plt.ylabel('Faturamento Médio', fontsize=12)
+    plt.xticks(rotation=30, ha='right', fontsize=10)
+    plt.legend(title='Filial', loc='upper left')
+
+    PATH_GRAFICOS = os.path.join(os.pardir, 'graphics')
+    save_path = os.path.join(PATH_GRAFICOS, 'vendas_dia_semana.png')
     plt.savefig(save_path)
     plt.show()
     plt.close()
