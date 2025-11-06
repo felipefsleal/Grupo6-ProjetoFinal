@@ -1,3 +1,4 @@
 .venv 
 graphics
 __pycache__
+data/processed/
