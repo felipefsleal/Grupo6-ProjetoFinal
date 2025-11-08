@@ -234,6 +234,55 @@ def plot_clientes_unicos_mensal_filial(df_vendas):
     plt.show()
     plt.close()
 
+def vendas_dia_mes(df):
+
+    # 2.1. Calcular o Faturamento TOTAL de CADA DIA (por Filial)
+    df_faturamento_diario = df.groupby(['DATA_ATEND', 'FILIAL']).agg(
+    Faturamento_Diario=('FATUR_VENDA', 'sum')
+    ).reset_index()
+    
+    # 2.2. Extrair o Dia do Mês
+    df_faturamento_diario['DIA_DO_MES'] = df_faturamento_diario['DATA_ATEND'].dt.day
+
+    # 2.3. Calcular o Faturamento MÉDIO por Dia do Mês
+    df_faturamento_medio_dia_mes = df_faturamento_diario.groupby(['DIA_DO_MES', 'FILIAL']).agg(
+        Faturamento_Medio=('Faturamento_Diario', 'mean') 
+    ).reset_index()
+
+    # --- 3. GERAÇÃO DO GRÁFICO ---
+
+    # 3.1. Preparar a visualização
+    plt.figure(figsize=(14, 6))
+    sns.set_style("whitegrid")
+
+    # 3.2. Criar o gráfico de linha
+    line_plot = sns.lineplot(
+        data=df_faturamento_medio_dia_mes,
+        x='DIA_DO_MES',
+        y='Faturamento_Medio',
+        hue='FILIAL',  
+        marker='o',    
+        palette='Blues'
+    )
+
+    # 3.3. Formatar o eixo Y para melhor leitura em Reais
+    formatter = ticker.FuncFormatter(lambda x, pos: f'R$ {x:,.0f}')
+    line_plot.yaxis.set_major_formatter(formatter)
+
+    # 3.4. Adicionar Título e Rótulos
+    plt.title('Faturamento Médio (por Transação) por Dia do Mês e Filial', fontsize=16)
+    plt.xlabel('Dia do Mês', fontsize=12)
+    plt.ylabel('Faturamento Médio por Transação (R$)', fontsize=12)
+    plt.xticks(range(1, 32))
+    plt.legend(title='Filial', loc='upper right')
+    plt.grid(axis='x', linestyle='--', alpha=0.6)
+
+    PATH_GRAFICOS = os.path.join(os.pardir, 'graphics')
+    save_path = os.path.join(PATH_GRAFICOS, 'vendas_dia_mes.png')
+    plt.savefig(save_path)
+    plt.show()
+    plt.close()
+
 def vendas_totais_dia_semana(df):
     # 1. Agrupar por dia da semana e calcular o faturamento total
     df['DIA_SEMANA'] = df['DATA_ATEND'].dt.day_name()

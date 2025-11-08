@@ -565,6 +565,59 @@ def subcategoria_by_filial_sazonal(df_vendas_completo, target_subcategory):
     plt.show()
     plt.close()
 
+def bacalhau_antes_natal(df):
+    import pandas as pd
+    from datetime import date, timedelta
+
+    ANO_ANALISE = 2024
+    DATA_NATAL = date(ANO_ANALISE, 12, 25)
+    DATA_INICIO_PERIODO = DATA_NATAL - timedelta(days=60)
+
+    # 2.2. Filtrar o DataFrame pelo período e pela subcategoria "Bacalhau"
+    df_sazonal_bacalhau = df[
+        (df['DATA_ATEND'].dt.date >= DATA_INICIO_PERIODO) &
+        (df['DATA_ATEND'].dt.date <= DATA_NATAL) &
+        (df['SUBCATEGORIA'].str.contains('Bacalhau', case=False, na=False))
+    ].copy()
+
+    # 2.3. Agrupar o Faturamento Diário por Dia e Filial
+    # Somamos o faturamento de cada dia no período sazonal
+    df_volume_diario = df_sazonal_bacalhau.groupby([
+        pd.Grouper(key='DATA_ATEND', freq='D'), 'FILIAL'
+    ]).agg(
+        Volume_Diario=('QTD_VENDA', 'sum')
+    ).reset_index()
+
+
+    # --- 3. GERAÇÃO DO GRÁFICO ---
+
+    # 3.1. Preparar a visualização
+    plt.figure(figsize=(14, 6))
+    sns.set_style("whitegrid")
+
+    # 3.2. Criar o gráfico de linha para mostrar a tendência de pico
+    line_plot = sns.lineplot(
+        data=df_volume_diario,
+        x='DATA_ATEND',
+        y='Volume_Diario',
+        hue='FILIAL',  # Diferenciação por Filial
+        marker='o',
+        palette='Blues'
+    )
+
+    # 3.3. Adicionar Título e Rótulos
+    plt.title(f'Faturamento Diário da Categoria Bacalhau ({DATA_INICIO_PERIODO.strftime("%d/%m")} a {DATA_NATAL.strftime("%d/%m")})', fontsize=16)
+    plt.xlabel('Data', fontsize=12)
+    plt.ylabel('Faturamento Diário (R$)', fontsize=12)
+    plt.xticks(rotation=45, ha='right', fontsize=10)
+    plt.legend(title='Filial', loc='upper left')
+
+    PATH_GRAFICOS = os.path.join(os.pardir, 'graphics')
+    save_path = os.path.join(PATH_GRAFICOS, 'bacalhau_antes_natal.png')
+    plt.savefig(save_path)
+    plt.show()
+    plt.close()
+
 def top_produtos(df):
     df_faturamento_produto = df.groupby(['NOME_PRODUTO', 'CATEGORIA']).agg(
         Faturamento_Total=('FATUR_VENDA', 'sum')
