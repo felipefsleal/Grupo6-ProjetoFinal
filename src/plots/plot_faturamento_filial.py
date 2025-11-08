@@ -91,6 +91,13 @@ def plot_faturamento_mensal_filial(df_vendas):
     formatter = ticker.FuncFormatter(lambda x, p: f'{x/1000:.0f}K')
     ax.yaxis.set_major_formatter(formatter)
     ax.legend(title='Filial', loc='upper left')
+    for p in ax.patches:
+        ax.annotate(f'{p.get_height():.0f}',
+                   (p.get_x() + p.get_width() / 2., p.get_height()),
+                   ha='center', va='center',
+                   xytext=(0, 9),
+                   textcoords='offset points',
+                   fontsize=8)
 
     # 5. Salvamento
     save_path = os.path.join(PATH_GRAFICOS, 'faturamento_mensal_agrupado.png')
@@ -227,6 +234,44 @@ def plot_clientes_unicos_mensal_filial(df_vendas):
     plt.show()
     plt.close()
 
+def vendas_totais_dia_semana(df):
+    # 1. Agrupar por dia da semana e calcular o faturamento total
+    df['DIA_SEMANA'] = df['DATA_ATEND'].dt.day_name()
+    df_faturamento_dia = df.groupby('DIA_SEMANA').agg(
+        Faturamento_Total=('FATUR_VENDA', 'sum')
+    ).reset_index()
+
+    # 2. Definir e aplicar a ordem correta dos dias da semana
+    ordem_dias = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    df_faturamento_dia['DIA_ORDEM'] = pd.Categorical(df_faturamento_dia['DIA_SEMANA'], categories=ordem_dias, ordered=True)
+    df_faturamento_dia = df_faturamento_dia.sort_values('DIA_ORDEM')
+
+    # 3. Criação do gráfico
+    plt.figure(figsize=(10, 6))
+    sns.set_style("whitegrid")
+    bar_plot = sns.barplot(data=df_faturamento_dia, x='DIA_SEMANA', y='Faturamento_Total', palette='Blues', hue='DIA_SEMANA', dodge=False)
+
+    # 4. Formatação
+    formatter = ticker.FuncFormatter(lambda x, pos: f'R$ {x/1e6:.2f}M')
+    bar_plot.yaxis.set_major_formatter(formatter)
+    for p in bar_plot.patches:
+        bar_plot.annotate(f'{p.get_height():.0f}',
+                   (p.get_x() + p.get_width() / 2., p.get_height()),
+                   ha='center', va='center',
+                   xytext=(0, 9),
+                   textcoords='offset points',
+                   fontsize=9)
+    plt.title('Faturamento Total por Dia da Semana', fontsize=16)
+    plt.xlabel('Dia da Semana', fontsize=12)
+    plt.ylabel('Faturamento Total', fontsize=12)
+    plt.xticks(rotation=30, ha='right', fontsize=10)
+
+    PATH_GRAFICOS = os.path.join(os.pardir, 'graphics')
+    save_path = os.path.join(PATH_GRAFICOS, 'vendas_totais_dia_semana.png')
+    plt.savefig(save_path)
+    plt.show()
+    plt.close()
+
 def vendas_dia_semana(df):
     df['DIA_SEMANA'] = df['DATA_ATEND'].dt.day_name()
 
@@ -252,6 +297,13 @@ def vendas_dia_semana(df):
         palette='Blues'       # Esquema de cores
     )
 
+    for p in bar_plot.patches:
+        bar_plot.annotate(f'{p.get_height():.0f}',
+                   (p.get_x() + p.get_width() / 2., p.get_height()),
+                   ha='center', va='center',
+                   xytext=(0, 9),
+                   textcoords='offset points',
+                   fontsize=9)
     plt.title('Faturamento Médio por Dia da Semana e Tipo de Filial', fontsize=16)
     plt.xlabel('Dia da Semana', fontsize=12)
     plt.ylabel('Faturamento Médio', fontsize=12)
